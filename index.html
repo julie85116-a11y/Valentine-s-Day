@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>七夕情人節｜麻糬寶寶我愛你</title>
+
+  <style>
+    /* 只載入 Ma Shan Zheng 的單一字重（400），避免混字重/混字型 */
+    @font-face{
+      font-family: "HandUnified";
+      font-style: normal;
+      font-weight: 400;
+      font-display: block; /* 字體未載入前先不顯示，避免 FOUT 造成粗細不一 */
+      src: url("https://fonts.gstatic.com/s/mashanzheng/v16/NaPecZTIAOhVxoMyOr9n_E7fdMPmBA.woff2") format("woff2");
+      unicode-range: U+0-7F, U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE6F, U+FF00-FFEF;
+    }
+
+    :root{
+      --paper: rgba(255,255,255,.88);
+      --shadow: 0 14px 36px rgba(0,0,0,.18);
+      --r:18px;
+
+      /* 統一字體 / 字級 / 行高 */
+      --hand: "HandUnified";
+      --fz-body: clamp(18px, 2.6vw, 20px);
+      --lh: 2.05;
+      --track: .02em;
+
+      /* 相簿配色 */
+      --album-bg: #3b2f2a; --album-ink: #f7f2ea;
+      --tape-a: #e8d49b; --tape-b: #d7bf87;
+
+      /* 信封配色 */
+      --env-stroke: #111; --env-pink: #ffd6ea;
+      --env-paper: #fff7df; --env-heart: #ff6b7d;
+    }
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+
+    /* ===== 把全站字體「鎖死」成單一款，固定 400，停用所有合成與連字 ===== */
+    .use-hand,
+    html, body, .title, .msg, .text, .cap, .arrow, .paper, .album, .slides {
+      font-family: var(--hand), "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji" !important;
+      font-weight: 400 !important;
+      font-style: normal !important;
+      font-synthesis: none;
+      font-synthesis-weight: none;
+      font-synthesis-style: none;
+      font-kerning: none;
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "kern" 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      paint-order: stroke fill;         /* 避免旋轉後筆畫變粗 */
+      letter-spacing: var(--track);
+      line-height: var(--lh);
+    }
+
+    /* 字體未 ready 前先隱藏，避免先以系統字體繪製造成不一致 */
+    html:not(.hand-ready) body{ visibility:hidden }
+
+    body{
+      margin:0; color:#2b2b2b; overflow-x:hidden;
+      background:#000; /* 視訊未載入前底色 */
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* 背景影片（行動裝置移除模糊以加速） */
+    .bg-video{ position:fixed; inset:0; width:100vw; height:100vh; object-fit:cover; z-index:-1; filter:brightness(.6) saturate(1.05) }
+    @media (max-width:760px){ .bg-video{ filter:brightness(.6) } }
+    .bg-overlay{ position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(60% 60% at 50% 20%, rgba(255,182,206,.22) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(255,233,241,.35) 0%, rgba(255,233,241,.05) 40%, rgba(240,248,245,.1) 100%); }
+
+    /* 花瓣/愛心 */
+    .petals{ position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden }
+    .petal{ position:absolute; top:-12vh; opacity:.9; width:26px; height:30px; background-size:100% 100%; background-repeat:no-repeat;
+            animation: fall var(--fall,14s) linear infinite, sway var(--sway,4s) ease-in-out infinite alternate;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,.08)); will-change: transform, top; }
+    .petal.sakura{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><radialGradient id='p' cx='50%' cy='35%'><stop offset='0' stop-color='%23ffe2f0'/><stop offset='1' stop-color='%23ff80ab'/></radialGradient></defs><path d='M20 1 C33 10 33 30 20 39 C7 30 7 10 20 1 Z' fill='url(%23p)'/><path d='M20 18 C22 21 22 24 20 28 C18 24 18 21 20 18 Z' fill='%23fff' opacity='.28'/></svg>") }
+    .petal.heart{  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M20 35 C14 29 4 23 4 14 C4 8 8 5 12 5 c4 0 6 2 8 5 c2-3 4-5 8-5 c4 0 8 3 8 9 c0 9-10 15-16 21z' fill='%23e84a78'/></svg>") }
+    @keyframes fall{ to{ top:110vh } }
+    @keyframes sway{ 0%{ transform:translateX(-18px) rotate(0) } 100%{ transform:translateX(18px) rotate(360deg) } }
+    @media (prefers-reduced-motion:reduce){ .petal{ display:none } }
+
+    /* 外層排版 */
+    .wrap{ position:relative; z-index:2; padding: 8vh 18px 18vh }
+    .container{ max-width:1100px; margin:0 auto }
+
+    /* ---------- 首屏卡片：信封樣式（紙張在最上層） ---------- */
+    .hero{ margin: 2vh auto 4vh; max-width: 960px }
+    .envelope{
+      position:relative; margin: 8px auto 14px; width: min(860px, 95vw);
+      aspect-ratio: 4/3;
+    }
+    .envelope .paper{
+      position:absolute; top:-6%; left:11%; width:78%; height:66%;
+      background: var(--env-paper); border:6px solid var(--env-stroke);
+      box-shadow: 0 16px 22px rgba(0,0,0,.25);
+      transform: rotate(-7deg); z-index:3;
+      padding: clamp(14px, 3vw, 22px) clamp(14px, 3vw, 24px);
+      overflow: auto; border-radius: 6px;
+      -webkit-overflow-scrolling: touch;
+      backface-visibility: hidden;
+    }
+    .envelope .paper h1{
+      margin:0 0 8px; font-size: clamp(26px,4.4vw,40px);
+      font-weight: 400 !important;
+    }
+    .envelope .paper p{
+      margin:0; white-space:pre-line; font-size: var(--fz-body);
+    }
+    .paper .hint{
+      position:absolute; right:12px; bottom:10px; font-size:.9em; opacity:.7; user-select:none;
+    }
+
+    /* 信封（後景；無黑色叉叉） */
+    .env-body{
+      position:absolute; left:6%; right:6%; bottom:4%; height:58%;
+      background: var(--env-pink); border:6px solid var(--env-stroke);
+      border-bottom-left-radius:8px; border-bottom-right-radius:8px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.25);
+      z-index:1; pointer-events:none;
+    }
+    .env-flap{
+      position:absolute; left:6%; right:6%; bottom: calc(4% + 58% - 6px); height:36%;
+      overflow:visible; z-index:1; pointer-events:none;
+    }
+    .env-flap::before{
+      content:""; position:absolute; inset:0;
+      background: var(--env-pink);
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+      border-top:6px solid var(--env-stroke);
+      border-right:6px solid var(--env-stroke);
+      border-left:6px solid var(--env-stroke);
+    }
+    .heart{
+      position:absolute; background:var(--env-heart);
+      width: clamp(40px, 7vw, 64px); height: cl
+
+
+
