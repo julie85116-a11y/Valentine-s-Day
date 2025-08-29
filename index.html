@@ -6,32 +6,36 @@
   <title>七夕情人節｜麻糬寶寶我愛你</title>
 
   <style>
-    /* 單一字重，避免粗細不一 */
+    /* 只載入 Ma Shan Zheng 的單一字重（400） */
     @font-face{
-      font-family:"HandUnified";
-      font-style:normal;
-      font-weight:400;
-      font-display:block;
-      src:url("https://fonts.gstatic.com/s/mashanzheng/v16/NaPecZTIAOhVxoMyOr9n_E7fdMPmBA.woff2") format("woff2");
-      unicode-range:U+0-7F,U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3400-4DBF,U+4E00-9FFF,U+F900-FAFF,U+FE10-FE6F,U+FF00-FFEF;
+      font-family: "HandUnified";
+      font-style: normal;
+      font-weight: 400;
+      font-display: block; /* 先隱藏到字體載完，避免粗細不一 */
+      src: url("https://fonts.gstatic.com/s/mashanzheng/v16/NaPecZTIAOhVxoMyOr9n_E7fdMPmBA.woff2") format("woff2");
+      unicode-range: U+0-7F, U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE6F, U+FF00-FFEF;
     }
 
     :root{
-      --paper:rgba(255,255,255,.88);
-      --shadow:0 10px 26px rgba(0,0,0,.16);
+      --paper: rgba(255,255,255,.88);
+      --shadow: 0 14px 36px rgba(0,0,0,.18);
       --r:18px;
 
-      --hand:"HandUnified";
-      --fz-body:clamp(18px,2.6vw,20px);
-      --lh:2.05;
-      --track:.02em;
+      /* 統一字體 / 字級 / 行高 */
+      --hand: "HandUnified";
+      --fz-body: clamp(18px, 2.6vw, 20px);
+      --lh: 2.05;
+      --track: .02em;
 
-      --album-bg:#3b2f2a; --album-ink:#f7f2ea;
-      --tape-a:#e8d49b; --tape-b:#d7bf87;
+      /* 相簿配色 */
+      --album-bg: #3b2f2a; --album-ink: #f7f2ea;
+      --tape-a: #e8d49b; --tape-b: #d7bf87;
 
-      --env-stroke:#111; --env-pink:#ffd6ea;
-      --env-paper:#fff7df; --env-heart:#ff6b7d;
+      /* 信封配色 */
+      --env-stroke: #111; --env-pink: #ffd6ea;
+      --env-paper: #fff7df; --env-heart: #ff6b7d;
 
+      /* 抽獎 */
       --gift-pink:#ffd6ea; --gift-red:#ff6b7d; --gift-dark:#222;
       --card:#fff7df;
     }
@@ -42,173 +46,267 @@
     /* 全站鎖定單一手寫字體與字重 */
     .use-hand,
     html, body, .title, .msg, .text, .cap, .arrow, .paper, .album, .slides, .lottery {
-      font-family:var(--hand),"Apple Color Emoji","Noto Color Emoji","Segoe UI Emoji" !important;
-      font-weight:400 !important;
-      font-style:normal !important;
-      font-synthesis:none;
-      font-kerning:none;
-      font-variant-ligatures:none;
-      font-feature-settings:"liga" 0,"clig" 0,"kern" 0;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      text-rendering:optimizeLegibility;
-      paint-order:stroke fill;
-      letter-spacing:var(--track);
-      line-height:var(--lh);
+      font-family: var(--hand), "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji" !important;
+      font-weight: 400 !important;
+      font-style: normal !important;
+      font-synthesis: none;
+      font-kerning: none;
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "kern" 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      paint-order: stroke fill;
+      letter-spacing: var(--track);
+      line-height: var(--lh);
     }
+
+    /* 字體未 ready 前先隱藏，避免先以系統字體繪製造成不一致 */
     html:not(.hand-ready) body{ visibility:hidden }
 
     body{
-      margin:0; color:#2b2b2b; overflow-x:hidden; background:#000;
-      -webkit-text-size-adjust:100%;
+      margin:0; color:#2b2b2b; overflow-x:hidden;
+      background:#000;
+      -webkit-text-size-adjust: 100%;
     }
 
-    /* 背景層級：影片0、覆蓋1、花瓣2、內容3 */
+    /* 背景影片層級：0（不再用 -1 以免被 body 蓋掉） */
     .bg-video{ position:fixed; inset:0; width:100vw; height:100vh; object-fit:cover; z-index:0; filter:brightness(.6) saturate(1.05) }
     @media (max-width:760px){ .bg-video{ filter:brightness(.6) } }
     .bg-overlay{ position:fixed; inset:0; z-index:1; pointer-events:none;
       background:
         radial-gradient(60% 60% at 50% 20%, rgba(255,182,206,.22) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(255,233,241,.28) 0%, rgba(255,233,241,.05) 40%, rgba(240,248,245,.08) 100%); }
+        linear-gradient(180deg, rgba(255,233,241,.35) 0%, rgba(255,233,241,.05) 40%, rgba(240,248,245,.1) 100%); }
 
+    /* 花瓣/愛心（放在 overlay 之上） */
     .petals{ position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden }
-    .petal{ position:absolute; top:-12vh; opacity:.9; width:24px; height:28px; background-size:100% 100%; background-repeat:no-repeat;
-            animation:fall var(--fall,12s) linear infinite, sway var(--sway,3.6s) ease-in-out infinite alternate;
-            will-change:transform,top; filter:drop-shadow(0 2px 2px rgba(0,0,0,.06)) }
-    .petal.sakura{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><radialGradient id='p' cx='50%' cy='35%'><stop offset='0' stop-color='%23ffe2f0'/><stop offset='1' stop-color='%23ff80ab'/></radialGradient></defs><path d='M20 1 C33 10 33 30 20 39 C7 30 7 10 20 1 Z' fill='url(%23p)'/></svg>") }
+    .petal{ position:absolute; top:-12vh; opacity:.9; width:26px; height:30px; background-size:100% 100%; background-repeat:no-repeat;
+            animation: fall var(--fall,14s) linear infinite, sway var(--sway,4s) ease-in-out infinite alternate;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,.08)); will-change: transform, top; }
+    .petal.sakura{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><radialGradient id='p' cx='50%' cy='35%'><stop offset='0' stop-color='%23ffe2f0'/><stop offset='1' stop-color='%23ff80ab'/></radialGradient></defs><path d='M20 1 C33 10 33 30 20 39 C7 30 7 10 20 1 Z' fill='url(%23p)'/><path d='M20 18 C22 21 22 24 20 28 C18 24 18 21 20 18 Z' fill='%23fff' opacity='.28'/></svg>") }
     .petal.heart{  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M20 35 C14 29 4 23 4 14 C4 8 8 5 12 5 c4 0 6 2 8 5 c2-3 4-5 8-5 c4 0 8 3 8 9 c0 9-10 15-16 21z' fill='%23e84a78'/></svg>") }
     @keyframes fall{ to{ top:110vh } }
-    @keyframes sway{ 0%{ transform:translate3d(-12px,0,0) rotate(0) } 100%{ transform:translate3d(12px,0,0) rotate(360deg) } }
+    @keyframes sway{ 0%{ transform:translateX(-18px) rotate(0) } 100%{ transform:translateX(18px) rotate(360deg) } }
     @media (prefers-reduced-motion:reduce){ .petal{ display:none } }
 
-    .wrap{ position:relative; z-index:3; padding:8vh 18px 16vh }
+    /* 外層排版（內容層級最高） */
+    .wrap{ position:relative; z-index:3; padding: 8vh 18px 18vh }
     .container{ max-width:1100px; margin:0 auto }
 
-    /* 信封 */
-    .hero{ margin:2vh auto 4vh; max-width:960px }
-    .envelope{ position:relative; margin:8px auto 14px; width:min(860px,95vw); aspect-ratio:4/3; }
+    /* ---------- 首屏卡片：信封樣式（紙張在最上層） ---------- */
+    .hero{ margin: 2vh auto 4vh; max-width: 960px }
+    .envelope{
+      position:relative; margin: 8px auto 14px; width: min(860px, 95vw);
+      aspect-ratio: 4/3;
+    }
     .envelope .paper{
       position:absolute; top:-6%; left:11%; width:78%; height:66%;
-      background:var(--env-paper); border:6px solid var(--env-stroke);
-      box-shadow:0 12px 18px rgba(0,0,0,.2);
-      transform:rotate(-7deg); z-index:3;
-      padding:clamp(14px,3vw,22px) clamp(14px,3vw,24px);
-      overflow:auto; border-radius:6px; -webkit-overflow-scrolling:touch; backface-visibility:hidden;
+      background: var(--env-paper); border:6px solid var(--env-stroke);
+      box-shadow: 0 16px 22px rgba(0,0,0,.25);
+      transform: rotate(-7deg); z-index:3;
+      padding: clamp(14px, 3vw, 22px) clamp(14px, 3vw, 24px);
+      overflow: auto; border-radius: 6px;
+      -webkit-overflow-scrolling: touch;
+      backface-visibility: hidden;
     }
-    .envelope .paper h1{ margin:0 0 8px; font-size:clamp(26px,4.4vw,40px); font-weight:400 !important }
-    .envelope .paper p{ margin:0; white-space:pre-line; font-size:var(--fz-body) }
-    .paper .hint{ position:absolute; right:12px; bottom:10px; font-size:.9em; opacity:.7; user-select:none }
+    .envelope .paper h1{
+      margin:0 0 8px; font-size: clamp(26px,4.4vw,40px);
+      font-weight: 400 !important;
+    }
+    .envelope .paper p{
+      margin:0; white-space:pre-line; font-size: var(--fz-body);
+    }
+    .paper .hint{
+      position:absolute; right:12px; bottom:10px; font-size:.9em; opacity:.7; user-select:none;
+    }
 
+    /* 信封（後景；無黑色叉叉） */
     .env-body{
       position:absolute; left:6%; right:6%; bottom:4%; height:58%;
-      background:var(--env-pink); border:6px solid var(--env-stroke);
+      background: var(--env-pink); border:6px solid var(--env-stroke);
       border-bottom-left-radius:8px; border-bottom-right-radius:8px;
-      box-shadow:0 10px 18px rgba(0,0,0,.2); z-index:1; pointer-events:none;
+      box-shadow: 0 12px 24px rgba(0,0,0,.25);
+      z-index:1; pointer-events:none;
     }
     .env-flap{
-      position:absolute; left:6%; right:6%; bottom:calc(4% + 58% - 6px); height:36%;
+      position:absolute; left:6%; right:6%; bottom: calc(4% + 58% - 6px); height:36%;
       overflow:visible; z-index:1; pointer-events:none;
     }
     .env-flap::before{
-      content:""; position:absolute; inset:0; background:var(--env-pink);
-      clip-path:polygon(50% 0, 100% 100%, 0 100%);
-      box-shadow:0 8px 16px rgba(0,0,0,.14);
-      border-top:6px solid var(--env-stroke); border-right:6px solid var(--env-stroke); border-left:6px solid var(--env-stroke);
+      content:""; position:absolute; inset:0;
+      background: var(--env-pink);
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+      border-top:6px solid var(--env-stroke);
+      border-right:6px solid var(--env-stroke);
+      border-left:6px solid var(--env-stroke);
     }
-    .heart{ position:absolute; background:var(--env-heart); width:clamp(40px,7vw,64px); height:clamp(40px,7vw,64px);
-            transform:rotate(45deg); box-shadow:0 6px 10px rgba(0,0,0,.16); z-index:1; border:6px solid var(--env-stroke); border-radius:8px; pointer-events:none }
-    .heart::before,.heart::after{ content:""; position:absolute; width:100%; height:100%; background:var(--env-heart); border:6px solid var(--env-stroke); border-radius:50% }
+    .heart{
+      position:absolute; background:var(--env-heart);
+      width: clamp(40px, 7vw, 64px); height: clamp(40px, 7vw, 64px);
+      transform: rotate(45deg); box-shadow: 0 6px 10px rgba(0,0,0,.18);
+      z-index:1; border:6px solid var(--env-stroke);
+      border-radius: 8px; pointer-events:none;
+    }
+    .heart::before, .heart::after{
+      content:""; position:absolute; width:100%; height:100%;
+      background:var(--env-heart); border:6px solid var(--env-stroke); border-radius:50%;
+    }
     .heart::before{ left:-50% } .heart::after{ top:-50% }
-    .h-big{ left:calc(50% - clamp(32px,6vw,52px)); bottom:calc(4% + 58% - clamp(22px,3vw,28px)); width:clamp(70px,10vw,92px); height:clamp(70px,10vw,92px) }
-    .h-mid{ left:16%; bottom:calc(4% + 58% - 12px); transform:rotate(45deg) scale(.8) }
-    .h-small{ left:10%; bottom:calc(4% + 58% + 26px); transform:rotate(45deg) scale(.6) }
+    .h-big{ left: calc(50% - clamp(32px, 6vw, 52px)); bottom: calc(4% + 58% - clamp(22px, 3vw, 28px)); width:clamp(70px,10vw,92px); height:clamp(70px,10vw,92px) }
+    .h-mid{ left: 16%; bottom: calc(4% + 58% - 12px); transform: rotate(45deg) scale(.8) }
+    .h-small{ left: 10%; bottom: calc(4% + 58% + 26px); transform: rotate(45deg) scale(.6) }
 
-    /* 相簿 */
+    /* ---------- 相簿 ---------- */
     .album{
-      position:relative; margin-top:24px; padding:24px; border-radius:20px;
+      position:relative; margin-top:24px; padding:28px; border-radius:20px;
       background:
-        radial-gradient(1200px 800px at -10% -20%, rgba(255,255,255,.05) 0%, transparent 60%),
-        radial-gradient(900px 600px at 110% 120%, rgba(255,255,255,.05) 0%, transparent 60%),
-        linear-gradient(180deg,#46362c 0%,#332821 100%);
-      background-color:var(--album-bg);
-      box-shadow:inset 0 12px 28px rgba(0,0,0,.24), 0 8px 24px rgba(0,0,0,.18);
+        radial-gradient(1200px 800px at -10% -20%, rgba(255,255,255,.06) 0%, transparent 60%),
+        radial-gradient(900px 600px at 110% 120%, rgba(255,255,255,.06) 0%, transparent 60%),
+        linear-gradient(180deg, #46362c 0%, #332821 100%);
+      background-color: var(--album-bg);
+      box-shadow: 0 20px 40px rgba(0,0,0,.35) inset, 0 12px 36px rgba(0,0,0,.2);
     }
-    .slides{ position:relative; min-height:72vh }
-    .slide{ position:absolute; inset:0; opacity:0; transform:translateX(24px) scale(.985); transition:opacity .33s ease, transform .33s ease; display:block }
+    .slides{ position:relative; min-height: 72vh }
+    .slide{
+      position:absolute; inset:0; opacity:0; transform:translateX(30px) scale(.98);
+      transition:opacity .5s ease, transform .5s ease; display:block; will-change: transform, opacity;
+    }
     .slide.active{ opacity:1; transform:translateX(0) scale(1) }
-    .page{ background:transparent; height:100%; display:grid; grid-template-columns:1fr min(360px,34%); gap:24px; align-items:center }
+    .page{ background:transparent; box-shadow:none; height:100%;
+           display:grid; grid-template-columns: 1fr min(360px,34%); gap:28px; align-items:center; }
     .frame{ position:relative }
-    .mat{ position:relative; background:#fff; padding:12px 12px 36px; border-radius:8px;
-          box-shadow:0 14px 26px rgba(0,0,0,.28); transform:rotate(-1.2deg) }
-    .slide:nth-child(even) .mat{ transform:rotate(.9deg) }
+    .mat{ position:relative; background:#fff; padding:14px 14px 42px; border-radius:8px;
+          box-shadow: 0 18px 36px rgba(0,0,0,.35); transform: rotate(-1.2deg) }
+    .slide:nth-child(even) .mat{ transform: rotate(.9deg) }
     .mat::before, .mat span.tape{
-      content:""; position:absolute; width:96px; height:24px; background:linear-gradient(180deg,var(--tape-a),var(--tape-b));
-      opacity:.9; mix-blend-mode:multiply; box-shadow:0 4px 8px rgba(0,0,0,.14);
-      clip-path:polygon(3% 0,97% 0,100% 20%,97% 100%,3% 100%,0 80%); pointer-events:none;
+      content:""; position:absolute; width:110px; height:28px; background:linear-gradient(180deg,var(--tape-a),var(--tape-b));
+      opacity:.9; mix-blend-mode:multiply; box-shadow:0 4px 10px rgba(0,0,0,.18);
+      clip-path: polygon(3% 0, 97% 0, 100% 20%, 97% 100%, 3% 100%, 0 80%); pointer-events:none;
     }
-    .mat::before{ left:-10px; top:-12px; transform:rotate(-12deg) }
-    .mat span.tape{ right:-8px; bottom:-10px; transform:rotate(10deg) }
+    .mat::before{ left:-10px; top:-12px; transform: rotate(-12deg) }
+    .mat span.tape{ right:-8px; bottom:-10px; transform: rotate(10deg) }
 
-    .media{ width:100%; max-height:58vh; aspect-ratio:3/4; object-fit:cover; border-radius:6px; box-shadow:0 8px 16px rgba(0,0,0,.16); display:block }
-    video.media{ aspect-ratio:auto; max-height:58vh; border-radius:6px; background:#000 }
+    .media{
+      width:100%; max-height:58vh; aspect-ratio:3/4; object-fit:cover; border-radius:6px;
+      box-shadow:0 10px 18px rgba(0,0,0,.18); display:block;
+    }
+    video.media{ aspect-ratio:auto; max-height:58vh; border-radius:6px }
+
     .text{ align-self:center; padding:8px 4px; color:var(--album-ink) }
-    .text h3{ margin:0; font-size:var(--fz-body); line-height:var(--lh) }
+    .text h3{ margin:0; font-size: var(--fz-body); line-height: var(--lh); }
 
-    .arrow{ position:absolute; top:0; bottom:0; width:13%; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; z-index:3; user-select:none; }
-    .arrow svg{ width:40px; height:40px; filter:drop-shadow(0 4px 10px rgba(0,0,0,.35)) }
+    .arrow{ position:absolute; top:0; bottom:0; width:13%; display:flex; align-items:center; justify-content:center;
+            color:#fff; cursor:pointer; z-index:3; user-select:none; }
+    .arrow svg{ width:40px; height:40px; filter: drop-shadow(0 4px 10px rgba(0,0,0,.35)) }
     .arrow-left{ left:-6px; background:linear-gradient(90deg, rgba(0,0,0,.18), transparent) }
     .arrow-right{ right:-6px; background:linear-gradient(270deg, rgba(0,0,0,.18), transparent) }
     .arrow:active{ transform:scale(.98) }
 
     @media (max-width:760px){
       .album{ padding:18px }
-      .page{ grid-template-columns:1fr; gap:14px }
+      .page{ grid-template-columns: 1fr; gap:16px }
       .media{ max-height:56vh }
       .arrow{ width:16% }
       .text{ text-align:center }
-      .envelope .paper{ transform:rotate(-4deg) }
+      .envelope .paper{ transform: rotate(-4deg) }
     }
 
     /* 破圖占位 */
     .media.broken{
-      background:center/48% no-repeat url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' rx='12' fill='%23f2f2f2'/><path d='M30 140l38-42 28 28 36-46 38 60H30z' fill='%23c8c8c8'/><circle cx='76' cy='78' r='10' fill='%23c8c8c8'/></svg>");
-      min-height:220px;
+      background:
+        center/48% no-repeat
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' rx='12' fill='%23f2f2f2'/><path d='M30 140l38-42 28 28 36-46 38 60H30z' fill='%23c8c8c8'/><circle cx='76' cy='78' r='10' fill='%23c8c8c8'/></svg>");
+      min-height: 220px;
     }
 
-    /* 抽獎 */
+    /* ========= 抽獎（禮物盒） ========= */
     .lottery{ margin:32px auto 0; max-width:960px; }
-    .lottery .card{ margin:0 18px; padding:22px 18px; background:var(--paper); border-radius:var(--r); box-shadow:var(--shadow); text-align:center; color:#2b2b2b }
+    .lottery .card{
+      margin:0 18px; padding:26px 18px; background:var(--paper);
+      border-radius:var(--r); box-shadow:var(--shadow); text-align:center; color:#2b2b2b;
+    }
     .lottery h2{ margin:0 0 6px; font-size:clamp(22px,4vw,30px) }
-    .lottery .note{ margin:0 0 10px; font-size:var(--fz-body) }
-    .gift{ margin:12px auto; width:min(360px,78vw); height:min(300px,64vw); position:relative; cursor:pointer; user-select:none; display:grid; place-items:center }
-    .gift .box{ width:78%; height:48%; background:var(--gift-pink); border:6px solid var(--gift-dark); border-radius:10px; position:absolute; bottom:10% }
-    .gift .lid{ width:85%; height:26%; background:var(--gift-pink); border:6px solid var(--gift-dark); border-bottom-width:8px; border-radius:12px; position:absolute; bottom:58%;
-               transform-origin:20% 120%; transition:transform .45s ease, translate .45s ease }
-    .gift .ribbon{ position:absolute; width:10%; height:85%; background:var(--gift-red); left:50%; translate:-50% 0; bottom:8%; border-radius:6px; box-shadow:0 0 0 6px var(--gift-red) inset }
-    .gift.open .lid{ transform:rotate(-28deg) translate(-14px,-40px) }
+    .lottery .note{ margin:0 0 12px; font-size:var(--fz-body) }
+
+    .gift{
+      margin:16px auto; width:min(360px,78vw); height:min(300px,64vw);
+      position:relative; cursor:pointer; user-select:none;
+      display:grid; place-items:center;
+    }
+    .gift .box{
+      width:78%; height:48%; background:var(--gift-pink);
+      border:6px solid var(--gift-dark); border-radius:10px;
+      position:absolute; bottom:10%;
+    }
+    .gift .lid{
+      width:85%; height:26%; background:var(--gift-pink);
+      border:6px solid var(--gift-dark); border-bottom-width:8px;
+      border-radius:12px; position:absolute; bottom:58%;
+      transform-origin: 20% 120%; transition: transform .5s ease, translate .5s ease;
+    }
+    .gift .ribbon{
+      position:absolute; width:10%; height:85%; background:var(--gift-red);
+      left:50%; translate:-50% 0; bottom:8%; border-radius:6px;
+      box-shadow:0 0 0 6px var(--gift-red) inset;
+    }
+    .gift.open .lid{ transform: rotate(-28deg) translate(-14px,-40px) }
     .gift.open .spark{ opacity:1; transform:translateY(0) scale(1) }
-    .spark{ position:absolute; top:8%; left:50%; translate:-50% -20px; display:flex; gap:10px; opacity:0; transform:translateY(10px) scale(.9); transition:.45s ease }
-    .spark span{ width:22px; height:22px; transform:rotate(45deg); background:var(--gift-red); border:4px solid var(--gift-dark); border-radius:6px }
-    .spark span::before,.spark span::after{ content:""; position:absolute; width:22px; height:22px; border-radius:50%; background:var(--gift-red); border:4px solid var(--gift-dark) }
-    .spark span::before{ top:-50% } .spark span::after{ left:-50% }
+
+    .spark{
+      position:absolute; top:8%; left:50%; translate:-50% -20px;
+      display:flex; gap:10px; opacity:0; transform:translateY(10px) scale(.9);
+      transition: .5s ease;
+    }
+    .spark span{
+      width:22px; height:22px; transform: rotate(45deg);
+      background:var(--gift-red); border:4px solid var(--gift-dark); border-radius:6px;
+    }
+    .spark span::before,.spark span::after{
+      content:""; position:absolute; width:22px; height:22px; border-radius:50%;
+      background:var(--gift-red); border:4px solid var(--gift-dark);
+    }
+    .spark span::before{ top:-50% }
+    .spark span::after{ left:-50% }
+
     .prize{ margin-top:10px }
-    .prize .paper{ display:inline-block; padding:14px 16px; background:var(--card); border:4px solid var(--gift-dark); border-radius:8px; box-shadow:0 8px 14px rgba(0,0,0,.16) }
-    .prize .result{ margin:0 0 8px; font-size:var(--fz-body) }
-    .btn{ border:none; background:var(--gift-red); color:#fff; padding:8px 14px; border-radius:999px; font-size:var(--fz-body); box-shadow:0 6px 12px rgba(0,0,0,.18); cursor:pointer }
+    .prize .paper{
+      display:inline-block; padding:16px 18px; background:var(--card);
+      border:4px solid var(--gift-dark); border-radius:8px;
+      box-shadow:0 10px 16px rgba(0,0,0,.18);
+    }
+    .prize .result{ margin:0 0 10px; font-size:var(--fz-body) }
+    .btn{
+      border:none; background:var(--gift-red); color:#fff;
+      padding:8px 16px; border-radius:999px; font-size:var(--fz-body);
+      box-shadow:0 6px 12px rgba(0,0,0,.18); cursor:pointer;
+    }
     .btn:active{ transform:translateY(1px) }
 
-    /* 心心煙火（加速） */
-    .heart-splash{ position:absolute; pointer-events:none; width:18px; height:18px; background:var(--env-heart); transform:rotate(45deg); border-radius:4px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); animation:floatUp .9s ease-out forwards }
-    .heart-splash::before,.heart-splash::after{ content:""; position:absolute; width:18px; height:18px; background:var(--env-heart); border-radius:50% }
-    .heart-splash::before{ left:-50% } .heart-splash::after{ top:-50% }
-    @keyframes floatUp{ to{ transform:translateY(-120px) rotate(45deg); opacity:0 } }
+    /* 心心煙火 */
+    .heart-splash{
+      position:absolute; pointer-events:none; width:18px; height:18px;
+      background:var(--env-heart); transform:rotate(45deg); border-radius:4px;
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
+      animation: floatUp 1.2s ease-out forwards;
+    }
+    .heart-splash::before,.heart-splash::after{
+      content:""; position:absolute; width:18px; height:18px; background:var(--env-heart); border-radius:50%;
+    }
+    .heart-splash::before{ left:-50% }
+    .heart-splash::after{ top:-50% }
+    @keyframes floatUp{
+      to{ transform:translateY(-120px) rotate(45deg); opacity:0 }
+    }
   </style>
 </head>
 <body class="use-hand">
 
-  <!-- 背景影片（根目錄） -->
-  <video class="bg-video" autoplay muted loop playsinline webkit-playsinline poster="IMG_3454.JPG"
+  <!-- 背景影片（root 路徑；優先 mp4，再 webm） -->
+  <video class="bg-video" autoplay muted playsinline webkit-playsinline poster="IMG_3454.JPG"
          data-sources='["couple_h264.mp4","couple.webm"]'>
+    <source src="couple_h264.mp4" type="video/mp4">
+    <source src="couple.webm" type="video/webm">
     您的瀏覽器不支援影片播放。
   </video>
   <div class="bg-overlay" aria-hidden="true"></div>
@@ -219,7 +317,7 @@
   <main class="wrap">
     <div class="container">
 
-      <!-- 信封在後、信紙在前 -->
+      <!-- 首屏卡片：信封在後、信紙在前 -->
       <section class="hero" aria-label="情人節信封卡片">
         <div class="envelope">
           <div class="paper">
@@ -235,6 +333,7 @@
             <div class="hint">⬆⬇ 可滑動</div>
           </div>
 
+          <!-- 信封（後景、僅裝飾） -->
           <div class="env-body" aria-hidden="true"></div>
           <div class="env-flap" aria-hidden="true"></div>
           <span class="heart h-small" aria-hidden="true"></span>
@@ -243,7 +342,7 @@
         </div>
       </section>
 
-      <!-- 相簿 -->
+      <!-- 相簿（全部改為根目錄檔名） -->
       <section class="album" aria-label="回憶相簿，可左右翻頁">
         <div class="arrow arrow-left" id="prev" aria-label="上一張" title="上一張">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -253,6 +352,7 @@
         </div>
 
         <div class="slides" id="slides">
+          <!-- 1 -->
           <article class="slide active">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第一張.JPG" alt="曖昧時期手手"></div></div>
@@ -260,6 +360,7 @@
             </div>
           </article>
 
+          <!-- 2 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第二張.jpg" alt="一起追太陽看日出"></div></div>
@@ -267,6 +368,7 @@
             </div>
           </article>
 
+          <!-- 3 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第三張.JPG" alt="拍拍貼機"></div></div>
@@ -274,6 +376,7 @@
             </div>
           </article>
 
+          <!-- 4 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第四張.jpg" alt="520 玫瑰花"></div></div>
@@ -281,6 +384,7 @@
             </div>
           </article>
 
+          <!-- 5 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第五張.jpg" alt="日常逛 IKEA"></div></div>
@@ -288,6 +392,7 @@
             </div>
           </article>
 
+          <!-- 6 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第六張.JPG" alt="台南遊 偷拍寶寶"></div></div>
@@ -295,6 +400,7 @@
             </div>
           </article>
 
+          <!-- 7 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第七張.jpg" alt="可可愛愛的床照"></div></div>
@@ -302,6 +408,7 @@
             </div>
           </article>
 
+          <!-- 8 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第八張.JPG" alt="到哪都要逛枕頭"></div></div>
@@ -309,16 +416,24 @@
             </div>
           </article>
 
+          <!-- 9：影片（這裡加上 autoplay） -->
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span>
-                <video class="media" muted playsinline webkit-playsinline controls preload="metadata"
-                       data-sources='["couple2_h264.mp4","couple2.webm"]'>您的瀏覽器不支援影片播放。</video>
-              </div></div>
+              <div class="frame">
+                <div class="mat"><span class="tape"></span>
+                  <video class="media" autoplay muted playsinline webkit-playsinline controls preload="metadata"
+                         data-sources='["couple2_h264.mp4","couple2.webm"]'>
+                    <source src="couple2_h264.mp4" type="video/mp4">
+                    <source src="couple2.webm" type="video/webm">
+                    您的瀏覽器不支援影片播放。
+                  </video>
+                </div>
+              </div>
               <div class="text"><h3>寶寶耍可愛日常</h3></div>
             </div>
           </article>
 
+          <!-- 10～12：近期三張 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="IMG_3412.JPG" alt="近期：女友視角"></div></div>
@@ -340,6 +455,7 @@
             </div>
           </article>
 
+          <!-- 13 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第九張-JPG.jpg" alt="七夕玫瑰"></div></div>
@@ -347,6 +463,7 @@
             </div>
           </article>
 
+          <!-- 14 -->
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="第十張.jpg" alt="巧克力"></div></div>
@@ -356,7 +473,7 @@
         </div>
       </section>
 
-      <!-- 抽獎 -->
+      <!-- 抽獎（禮物盒） -->
       <section class="lottery" aria-label="抽禮物">
         <div class="card">
           <h2>抽禮物 🎁</h2>
@@ -382,135 +499,171 @@
   </main>
 
   <script>
-    /* 字型載入完成再顯示 */
-    document.fonts?.ready.then(()=>document.documentElement.classList.add('hand-ready'));
+    /* 確認字型載入完成後再顯示（避免粗細不一） */
+    document.fonts.ready.then(() => document.documentElement.classList.add('hand-ready'));
 
-    /* 落花：手機減量以提升效能 */
+    // 花瓣數量：桌機多、手機少
     const isMobile = matchMedia('(max-width: 760px)').matches;
-    const sak = isMobile ? 16 : 36;
-    const hearts = isMobile ? 10 : 20;
+    const sak = isMobile ? 22 : 46;
+    const hearts = isMobile ? 12 : 26;
+
     const layer = document.querySelector('.petals');
     function drop(type, count){
       for(let i=0;i<count;i++){
-        const el=document.createElement('span');
-        el.className='petal '+type;
-        const size=12+Math.random()*18;
-        el.style.width=size+'px'; el.style.height=size*1.2+'px';
-        el.style.left=(Math.random()*100)+'vw';
-        el.style.opacity=0.78+Math.random()*0.22;
-        const fall=9+Math.random()*9, sway=2.2+Math.random()*3.2;
+        const el = document.createElement('span');
+        el.className = 'petal ' + type;
+        const size = 12 + Math.random()*22;
+        el.style.width = size+'px'; el.style.height = size*1.2+'px';
+        el.style.left = (Math.random()*100)+'vw';
+        el.style.opacity = 0.75 + Math.random()*0.25;
+        const fall = 10 + Math.random()*12, sway = 2.5 + Math.random()*4.5;
         el.style.setProperty('--fall', fall+'s'); el.style.setProperty('--sway', sway+'s');
-        el.style.animationDelay=(-Math.random()*fall)+'s, '+(-Math.random()*sway)+'s';
+        el.style.animationDelay = (-Math.random()*fall)+'s, '+(-Math.random()*sway)+'s';
+        if(Math.random()<.35){ el.style.filter='blur(.5px) drop-shadow(0 2px 1px rgba(0,0,0,.06))' }
         layer.appendChild(el);
       }
     }
     drop('sakura', sak); drop('heart', hearts);
 
-    /* 相簿翻頁（更快的轉場） */
-    const slides=[...document.querySelectorAll('.slide')];
-    let i=0;
+    // 相簿：箭頭 / 鍵盤 / 觸控
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let i = 0;
+
+    // 新增：暫停全部影片 & 播放目前頁的影片（確保自動播放）
+    function pauseAllVideos(){
+      document.querySelectorAll('video.media').forEach(v=>{
+        try{ v.pause(); }catch(_){}
+      });
+    }
+    function playIfVideo(slide){
+      const v = slide.querySelector('video.media');
+      if (!v) return;
+      v.muted = true;
+      v.playsInline = true;
+      v.setAttribute('playsinline','');
+      v.setAttribute('webkit-playsinline','');
+      v.autoplay = true;
+      // 直接嘗試播放
+      v.play().catch(()=>{});
+    }
+
     function go(n){
       slides[i].classList.remove('active');
-      i=(n+slides.length)%slides.length;
+      i = (n + slides.length) % slides.length;
       slides[i].classList.add('active');
+      // 切換時控制影片
+      pauseAllVideos();
+      playIfVideo(slides[i]);
     }
-    document.getElementById('prev').onclick=()=>go(i-1);
-    document.getElementById('next').onclick=()=>go(i+1);
-    document.addEventListener('keydown',e=>{
+
+    document.getElementById('prev').onclick = () => go(i-1);
+    document.getElementById('next').onclick = () => go(i+1);
+    document.addEventListener('keydown', e => {
       if(e.key==='ArrowLeft') go(i-1);
       if(e.key==='ArrowRight') go(i+1);
-    },{passive:true});
+    }, {passive:true});
 
-    /* 觸控滑動 */
-    let sx=0, dx=0; const area=document.getElementById('slides');
-    area.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-    area.addEventListener('touchmove', e=>dx=e.touches[0].clientX-sx,{passive:true});
-    area.addEventListener('touchend',  ()=>{ if(Math.abs(dx)>40){ dx>0?go(i-1):go(i+1) } dx=0; },{passive:true});
+    // 觸控滑動
+    let sx=0, dx=0; const area = document.getElementById('slides');
+    area.addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
+    area.addEventListener('touchmove',  e => dx = e.touches[0].clientX - sx, {passive:true});
+    area.addEventListener('touchend',   () => { if(Math.abs(dx)>40){ dx>0?go(i-1):go(i+1) } dx=0; }, {passive:true});
 
-    /* 圖片容錯載入：大小寫 / 編碼 / 常見副檔名 */
-    document.querySelectorAll('img.media').forEach(img=>{
-      const orig=img.getAttribute('src')||"";
-      const ext=(orig.match(/\.\w+$/)||[""])[0];
-      const arr=[orig];
-      if(ext) arr.push(orig.replace(/\.\w+$/,m=>m===m.toLowerCase()?m.toUpperCase():m.toLowerCase()));
-      const base=ext?orig.replace(/\.\w+$/,""):orig;
-      [".jpg",".JPG",".jpeg",".png",".webp"].forEach(e=>arr.push(base+e));
-      arr.push(encodeURI(orig)); if(ext) arr.push(encodeURI(base)+ext); arr.push(orig.replace(/\s/g,"%20"));
-      const list=[...new Set(arr)].filter(Boolean);
-      let k=0;
-      function tryNext(){
-        if(k>=list.length){ img.classList.add('broken'); return; }
-        const url=list[k++], probe=new Image();
-        probe.onload=()=>img.src=url; probe.onerror=tryNext; probe.src=url;
+    /* 圖片容錯載入 */
+    document.querySelectorAll('img.media').forEach(img => {
+      const orig = img.getAttribute('src') || "";
+      const ext = (orig.match(/\.\w+$/) || [""])[0];
+
+      const candidates = [];
+      candidates.push(orig);
+      if (ext) {
+        const toggled = orig.replace(/\.\w+$/, m => (m === m.toLowerCase() ? m.toUpperCase() : m.toLowerCase()));
+        candidates.push(toggled);
       }
-      img.addEventListener('error',tryNext,{once:true});
-      if(img.complete && img.naturalWidth===0) tryNext();
+      const bases = ext ? [orig.replace(/\.\w+$/, "")] : [orig];
+      [".jpg",".JPG",".jpeg",".png",".webp"].forEach(e =>
+        bases.forEach(b => candidates.push(b + e))
+      );
+      candidates.push(encodeURI(orig));
+      if (ext) candidates.push(encodeURI(orig.replace(/\.\w+$/, "")) + ext);
+      candidates.push(orig.replace(/\s/g, "%20"));
+
+      const tried = new Set();
+      const unique = candidates.filter(u => u && !tried.has(u) && (tried.add(u), true));
+      let idx = 0;
+
+      function tryNext(){
+        if (idx >= unique.length) {
+          img.classList.add('broken');
+          console.warn("找不到圖片：", orig, "\n已嘗試：", unique);
+          return;
+        }
+        const url = unique[idx++];
+        const probe = new Image();
+        probe.onload  = () => { img.src = url; };
+        probe.onerror = tryNext;
+        probe.src = url;
+      }
+
+      img.addEventListener('error', tryNext, { once:true });
+      if (img.complete && img.naturalWidth === 0) tryNext();
     });
 
-    /* 影片容錯載入：逐一試播 + 大小寫/編碼變體 + 自動播放解鎖 */
-    function canPlay(type){
-      const v=document.createElement('video');
-      return !!v.canPlayType && v.canPlayType(type).replace(/no/,'');
+    /* 影片容錯：依序嘗試來源、大小寫/編碼變體；補自動播放 */
+    function buildVideoCandidates(src){
+      const ext = (src.match(/\.\w+$/) || [""])[0];
+      const out = [src];
+      if (ext) out.push(src.replace(/\.\w+$/, m => (m === m.toLowerCase() ? m.toUpperCase() : m.toLowerCase())));
+      out.push(encodeURI(src));
+      if (ext) out.push(encodeURI(src.replace(/\.\w+$/, "")) + ext);
+      out.push(src.replace(/\s/g, "%20"));
+      return Array.from(new Set(out));
     }
-    function candidatesFrom(src){
-      const ext=(src.match(/\.\w+$/)||[""])[0], out=[src];
-      if(ext) out.push(src.replace(/\.\w+$/,m=>m===m.toLowerCase()?m.toUpperCase():m.toLowerCase()));
-      out.push(encodeURI(src)); if(ext) out.push(encodeURI(src.replace(/\.\w+$/,""))+ext);
-      out.push(src.replace(/\s/g,"%20"));
-      return [...new Set(out)];
+    function canPlayType(type){
+      const v = document.createElement('video');
+      return !!v.canPlayType && v.canPlayType(type).replace(/no/, '');
     }
-    function initVideo(v){
-      const data=v.getAttribute('data-sources');
-      const raw = data ? (()=>{ try { return JSON.parse(data) } catch { return [] } })() : [];
-      const mp4=raw.filter(s=>/\.mp4(\?|$)/i.test(s));
-      const webm=raw.filter(s=>/\.webm(\?|$)/i.test(s));
-      const order=(canPlay('video/mp4')?mp4:[]).concat(canPlay('video/webm')?webm:[]).concat(raw);
-      const list=[...new Set(order.flatMap(candidatesFrom))];
+    function tryPlayVideo(videoEl){
+      const list = [];
+      const data = videoEl.getAttribute('data-sources');
+      if (data) { try { JSON.parse(data).forEach(s => list.push(s)); } catch {} }
+      videoEl.querySelectorAll('source').forEach(s => list.push(s.getAttribute('src')));
 
-      let idx=0;
+      const mp4s = list.filter(s => /\.mp4(\?|$)/i.test(s));
+      const webs = list.filter(s => /\.webm(\?|$)/i.test(s));
+      const order = (canPlayType('video/mp4') ? mp4s : []).concat(canPlayType('video/webm') ? webs : []).concat(list);
+
+      const candidates = [];
+      order.forEach(s => buildVideoCandidates(s).forEach(v => candidates.push(v)));
+      const uniq = Array.from(new Set(candidates));
+
+      let idx = 0;
       function tryNext(){
-        if(idx>=list.length){ console.warn('影片皆無法播放：',list); return; }
-        const url=list[idx++];
-        v.src=url; v.load();
-        const timer=setTimeout(()=>{ if(v.readyState<2) tryNext(); }, 2000);
-        v.addEventListener('loadeddata',()=>{ clearTimeout(timer); v.play().catch(()=>{}); },{once:true});
-        v.addEventListener('error',tryNext,{once:true});
+        if (idx >= uniq.length) { console.warn('影片皆無法播放：', uniq); return; }
+        const src = uniq[idx++];
+        videoEl.src = src;
+        videoEl.load();
+        videoEl.play().catch(()=>{});
+        const timer = setTimeout(() => { if (videoEl.readyState < 2) tryNext(); }, 1500);
+        videoEl.addEventListener('loadeddata', () => clearTimeout(timer), { once:true });
+        videoEl.addEventListener('error', tryNext, { once:true });
       }
       tryNext();
     }
-    const bg=document.querySelector('.bg-video'); initVideo(bg);
-    document.querySelectorAll('video.media').forEach(initVideo);
 
-    /* 使用者首次互動後再補一次 play()（iOS/Android 政策） */
-    const resumeAll=()=>{ [bg,...document.querySelectorAll('video.media')].forEach(v=>v&&v.play&&v.play().catch(()=>{})); };
-    window.addEventListener('touchstart',resumeAll,{once:true,passive:true});
-    window.addEventListener('click',resumeAll,{once:true,passive:true});
+    const bg = document.querySelector('.bg-video');
+    tryPlayVideo(bg);
+    document.querySelectorAll('video.media').forEach(v => tryPlayVideo(v));
 
-    /* 抽獎 */
-    const gift=document.getElementById('gift');
-    const result=document.getElementById('result');
-    const again=document.getElementById('again');
-    const GRAND=["大獎 🎁 "];
-    const SMALL=["小獎 🎁 "];
-    const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
-    function heartSplash(){
-      const host=gift, rect=host.getBoundingClientRect();
-      const cx=rect.width/2, cy=rect.height*0.35;
-      const n=10; for(let i=0;i<n;i++){
-        const h=document.createElement('span'); h.className='heart-splash';
-        h.style.left=(cx+(Math.random()*120-60))+'px';
-        h.style.top =(cy+(Math.random()*20-10))+'px';
-        h.style.opacity=.9; h.style.animationDelay=(Math.random()*0.2)+'s';
-        host.appendChild(h); setTimeout(()=>h.remove(), 950);
-      }
-    }
-    function drawPrize(){
-      const big=Math.random()<0.5;
-      result.textContent=big?pick(GRAND):pick(SMALL);
-      gift.classList.add('open'); again.disabled=false; heartSplash();
-    }
-    gift.addEventListener('click',()=>{ if(!gift.classList.contains('open')) drawPrize(); });
-    again.addEventListener('click',()=>{ gift.classList.remove('open'); result.textContent="準備好了嗎？點禮物盒再抽一次！"; again.disabled=true; });
+    // iOS/Android 需要第一次互動後再保險觸發一次播放
+    const resumeAll = () => {
+      [bg, ...document.querySelectorAll('video.media')].forEach(v => v && v.play && v.play().catch(()=>{}));
+    };
+    window.addEventListener('touchstart', resumeAll, {passive:true, once:true});
+    window.addEventListener('click', resumeAll, {passive:true, once:true});
+
+    // 首次載入時，如果第一張是影片就播放
+    playIfVideo(slides[0]);
   </script>
 </body>
 </html>
