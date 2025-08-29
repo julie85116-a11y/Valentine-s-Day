@@ -5,17 +5,24 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>七夕情人節｜麻糬寶寶我愛你</title>
 
-  <!-- 主要手寫字體：LXGW WenKai TC（字形穩定、筆畫一致） -->
-  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400&display=swap" rel="stylesheet">
-
   <style>
+    /* 只載入 Ma Shan Zheng 的單一字重（400），避免混字重/混字型 */
+    @font-face{
+      font-family: "HandUnified";
+      font-style: normal;
+      font-weight: 400;
+      font-display: block; /* 字體未載入前先不顯示，避免 FOUT 造成粗細不一 */
+      src: url("https://fonts.gstatic.com/s/mashanzheng/v16/NaPecZTIAOhVxoMyOr9n_E7fdMPmBA.woff2") format("woff2");
+      unicode-range: U+0-7F, U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE6F, U+FF00-FFEF;
+    }
+
     :root{
       --paper: rgba(255,255,255,.88);
       --shadow: 0 14px 36px rgba(0,0,0,.18);
       --r:18px;
 
-      /* 統一字體 / 字級 / 行高（整站只用單一字重 400） */
-      --hand: "LXGW WenKai TC";
+      /* 統一字體 / 字級 / 行高 */
+      --hand: "HandUnified";
       --fz-body: clamp(18px, 2.6vw, 20px);
       --lh: 2.05;
       --track: .02em;
@@ -27,17 +34,14 @@
       /* 信封配色 */
       --env-stroke: #111; --env-pink: #ffd6ea;
       --env-paper: #fff7df; --env-heart: #ff6b7d;
-
-      /* 抽獎配色 */
-      --gift-red:#ff6b7d; --gift-gold:#ffe27a; --gift-shadow:rgba(0,0,0,.18);
     }
 
     *{ box-sizing:border-box }
     html,body{ height:100% }
 
-    /* ===== 全站字體強制鎖定（避免粗細/樣式混用） ===== */
+    /* ===== 把全站字體「鎖死」成單一款，固定 400，停用所有合成與連字 ===== */
     .use-hand,
-    html, body, .title, .msg, .text, .cap, .arrow, .paper, .album, .slides, .lucky, .prize-card {
+    html, body, .title, .msg, .text, .cap, .arrow, .paper, .album, .slides {
       font-family: var(--hand), "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji" !important;
       font-weight: 400 !important;
       font-style: normal !important;
@@ -50,12 +54,12 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
-      paint-order: stroke fill;
+      paint-order: stroke fill;         /* 避免旋轉後筆畫變粗 */
       letter-spacing: var(--track);
       line-height: var(--lh);
     }
 
-    /* 等待字型 ready，避免先用系統字體造成不一致 */
+    /* 字體未 ready 前先隱藏，避免先以系統字體繪製造成不一致 */
     html:not(.hand-ready) body{ visibility:hidden }
 
     body{
@@ -206,79 +210,12 @@
       .envelope .paper{ transform: rotate(-4deg) }
     }
 
-    /* ---------- 抽獎：禮物盒 ---------- */
-    .lucky{
-      margin: 40px auto 0; max-width: 960px; text-align:center; color:#fff;
-    }
-    .gift{
-      position:relative; width:260px; height:220px; margin: 10px auto 18px; cursor:pointer;
-      filter: drop-shadow(0 10px 22px var(--gift-shadow));
-      user-select:none;
-    }
-    .box{
-      position:absolute; left:0; right:0; bottom:0; height:150px; border-radius:12px;
-      background: linear-gradient(180deg, #ffc9d4, #ffb1c1);
-      border:6px solid #111;
-    }
-    .ribbon-v{
-      position:absolute; top:0; bottom:0; left:50%; width:28px; transform: translateX(-50%);
-      background: linear-gradient(180deg, var(--gift-gold), #ffcf55);
-      border-left:6px solid #111; border-right:6px solid #111;
-    }
-    .lid{
-      position:absolute; left:-10px; right:-10px; top:22px; height:80px; border-radius:12px;
-      background: linear-gradient(180deg, #ffdce3, #ffc0cf);
-      border:6px solid #111; transform-origin: 20% 100%;
-      transition: transform .6s cubic-bezier(.2,.7,.2,1.2);
-    }
-    .ribbon-h{
-      position:absolute; left:0; right:0; top:52px; height:24px;
-      background: linear-gradient(180deg, var(--gift-gold), #ffcf55);
-      border-top:6px solid #111; border-bottom:6px solid #111;
-    }
-    .bow{
-      position:absolute; width:46px; height:46px; left:50%; top:0; transform: translate(-50%, -30%) rotate(45deg);
-      background: var(--gift-red); border:6px solid #111; border-radius:12px;
-      box-shadow:0 4px 10px var(--gift-shadow);
-    }
-    .bow::before,.bow::after{
-      content:""; position:absolute; background:var(--gift-red); border:6px solid #111; border-radius:50%;
-      width:100%; height:100%;
-    }
-    .bow::before{ left:-50%; top:0 } .bow::after{ left:0; top:-50% }
-
-    .gift.open .lid{ transform: rotate(-22deg) translateY(-16px) }
-    .gift.open .bow{ transform: translate(-50%, -70%) rotate(45deg) }
-
-    .tip{ opacity:.9; font-size: .95rem; margin-bottom:8px }
-
-    /* 抽中結果卡片 */
-    .prize-card{
-      display:none; margin:0 auto; max-width:680px; background:rgba(255,255,255,.92); color:#2b2b2b;
-      border-radius:16px; padding:18px 16px; box-shadow:0 14px 26px rgba(0,0,0,.22);
-    }
-    .prize-card.show{ display:block; animation: fadeIn .35s ease }
-    .prize-title{ margin:0 0 6px; font-size: clamp(22px,3.2vw,26px) }
-    .prize-text{ margin:0; font-size: var(--fz-body) }
-    .prize-actions{ margin-top:12px; display:flex; gap:10px; justify-content:center }
-    .btn{
-      appearance:none; border:none; border-radius:999px; padding:10px 18px; cursor:pointer;
-      background:linear-gradient(180deg, #ffd1dc, #ffb4c8); color:#111; font-size:16px;
-      box-shadow:0 8px 16px rgba(0,0,0,.18);
-    }
-    .btn:active{ transform: translateY(1px) }
-
-    @keyframes fadeIn{ from{opacity:0; transform: translateY(6px)} to{opacity:1; transform:none} }
-
-    /* 彩帶 */
-    .confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden }
-    .confetti i{
-      position:absolute; width:8px; height:12px; background: #fff; opacity:.9;
-      animation: conf 1.6s ease-out forwards; transform:translate3d(0,0,0);
-    }
-    @keyframes conf{
-      0%{ transform: translateY(0) rotate(0) }
-      100%{ transform: translateY(160px) rotate(540deg); opacity:0 }
+    /* --- 破圖替代樣式（顯示灰底圖示並保留版面） --- */
+    .media.broken{
+      background:
+        center/48% no-repeat
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' rx='12' fill='%23f2f2f2'/><path d='M30 140l38-42 28 28 36-46 38 60H30z' fill='%23c8c8c8'/><circle cx='76' cy='78' r='10' fill='%23c8c8c8'/></svg>");
+      min-height: 220px;
     }
   </style>
 </head>
@@ -440,33 +377,11 @@
       </section>
 
       <p class="cap use-hand" style="text-align:center;color:#fff;opacity:.9;margin-top:18px;font-size:var(--fz-body)">左右鍵、滑動都可以翻頁</p>
-
-      <!-- 抽獎：禮物盒 -->
-      <section class="lucky" aria-label="抽獎樂">
-        <p class="tip">開箱禮物盒抽獎（有 <b>大獎</b> 和 <b>小獎</b>）</p>
-        <div class="gift" id="gift" role="button" tabindex="0" aria-label="點擊開箱抽獎">
-          <div class="lid"></div>
-          <div class="bow"></div>
-          <div class="box"></div>
-          <div class="ribbon-v"></div>
-          <div class="ribbon-h"></div>
-          <div class="confetti" aria-hidden="true"></div>
-        </div>
-
-        <div id="prize" class="prize-card" aria-live="polite">
-          <h3 class="prize-title">恭喜抽中！</h3>
-          <p class="prize-text" id="prizeText"></p>
-          <div class="prize-actions">
-            <button class="btn" id="again">再抽一次</button>
-          </div>
-        </div>
-      </section>
-
     </div>
   </main>
 
   <script>
-    /* 等字型載入完成再顯示，避免一開始用系統字體導致粗細不一 */
+    /* 確認字型載入完成後再顯示（避免粗細不一） */
     document.fonts.ready.then(() => document.documentElement.classList.add('hand-ready'));
 
     // 花瓣數量：桌機多、手機少
@@ -513,80 +428,60 @@
     area.addEventListener('touchmove',  e => dx = e.touches[0].clientX - sx, {passive:true});
     area.addEventListener('touchend',   () => { if(Math.abs(dx)>40){ dx>0?go(i-1):go(i+1) } dx=0; }, {passive:true});
 
-    // 圖片大小寫容錯（JPG/jpg）
+    /* --- 強化圖片載入容錯：大小寫、編碼、常見副檔名互換，最後給破圖提示 --- */
     document.querySelectorAll('img.media').forEach(img => {
-      const orig = img.getAttribute('src');
-      const m = orig.match(/\.(jpg|jpeg)$/i);
-      if (!m) return;
-      const alt = orig.replace(/\.(jpg|jpeg)$/i, ext => (ext === ext.toLowerCase() ? ext.toUpperCase() : ext.toLowerCase()));
-      let tried = false;
-      img.addEventListener('error', function onErr() {
-        if (tried) { img.removeEventListener('error', onErr); return; }
-        tried = true; img.src = alt;
-      }, { once: true });
-    });
+      const orig = img.getAttribute('src') || "";
 
-    /* ----- 抽獎邏輯：禮物盒開蓋 + 彩帶 + 結果 ----- */
-    const gift = document.getElementById('gift');
-    const prizeCard = document.getElementById('prize');
-    const prizeText = document.getElementById('prizeText');
-    const again = document.getElementById('again');
-    const confettiLayer = gift.querySelector('.confetti');
+      // 取副檔名（若沒有則給空字串）
+      const ext = (orig.match(/\.\w+$/) || [""])[0];
 
-    // 可自行編輯獎項內容
-    const bigPrizes = [
-      "大獎 🎁",
-    ];
-    const smallPrizes = [
-      "小獎 💝",
-    ];
+      // 可能的替代路徑（依序嘗試）
+      const candidates = [];
 
-    function rand(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+      // 1. 原始
+      candidates.push(orig);
 
-    function fireConfetti(){
-      confettiLayer.innerHTML = "";
-      const n = 40;
-      for(let k=0;k<n;k++){
-        const chip = document.createElement('i');
-        const x = 20 + Math.random()*220;
-        chip.style.left = x+'px';
-        chip.style.top = (40 + Math.random()*20)+'px';
-        chip.style.background = `hsl(${Math.random()*360},90%,70%)`;
-        chip.style.animationDelay = (Math.random()*0.4)+'s';
-        chip.style.transform = `translateY(0) rotate(${Math.random()*120}deg)`;
-        confettiLayer.appendChild(chip);
+      // 2. 副檔名大小寫對調
+      if (ext) {
+        const toggled = orig.replace(/\.\w+$/, m => (m === m.toLowerCase() ? m.toUpperCase() : m.toLowerCase()));
+        candidates.push(toggled);
       }
-    }
 
-    function draw(){
-      // 機率：20% 大獎，其餘小獎
-      const big = Math.random() < 0.2;
-      const result = big ? rand(bigPrizes) : rand(smallPrizes);
-      prizeText.textContent = result;
-      prizeCard.classList.add('show');
-      fireConfetti();
-    }
+      // 3. 嘗試改成 .jpg / .JPG / .jpeg / .png / .webp
+      const bases = ext ? [orig.replace(/\.\w+$/, "")] : [orig];
+      [".jpg",".JPG",".jpeg",".png",".webp"].forEach(e =>
+        bases.forEach(b => candidates.push(b + e))
+      );
 
-    function openBox(){
-      gift.classList.add('open');
-      draw();
-    }
+      // 4. URL 編碼版本（處理空白、中文等）
+      candidates.push(encodeURI(orig));
+      if (ext) candidates.push(encodeURI(orig.replace(/\.\w+$/, "")) + ext);
 
-    function resetBox(){
-      gift.classList.remove('open');
-      prizeCard.classList.remove('show');
-      confettiLayer.innerHTML = "";
-      // 小延遲，避免連續點擊卡動畫
-      setTimeout(openBox, 120);
-    }
+      // 5. 把空白換成 %20
+      candidates.push(orig.replace(/\s/g, "%20"));
 
-    gift.addEventListener('click', () => {
-      if(!gift.classList.contains('open')) openBox();
+      // 移除重複
+      const tried = new Set();
+      const unique = candidates.filter(u => u && !tried.has(u) && (tried.add(u), true));
+
+      // 逐一嘗試載入
+      let idx = 0;
+      function tryNext(){
+        if (idx >= unique.length) {
+          img.classList.add('broken');
+          console.warn("找不到圖片：", orig, "\n已嘗試：", unique);
+          return;
+        }
+        const url = unique[idx++];
+        const probe = new Image();
+        probe.onload  = () => { img.src = url; };
+        probe.onerror = tryNext;
+        probe.src = url;
+      }
+
+      // 一旦原連結報錯，開始嘗試替代方案
+      img.addEventListener('error', tryNext, { once:true });
     });
-    gift.addEventListener('keydown', e => {
-      if((e.key === 'Enter' || e.key === ' ') && !gift.classList.contains('open')){ e.preventDefault(); openBox(); }
-    });
-    again.addEventListener('click', resetBox);
   </script>
 </body>
 </html>
