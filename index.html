@@ -541,10 +541,13 @@
       const v = slide.querySelector('video.media');
       if (!v) return;
       v.muted = true;
+      v.defaultMuted = true;
       v.playsInline = true;
       v.setAttribute('playsinline','');
       v.setAttribute('webkit-playsinline','');
       v.autoplay = true;
+      v.setAttribute('autoplay','');
+      v.preload = 'auto';
       v.play().catch(()=>{});
     }
 
@@ -609,7 +612,7 @@
       if (img.complete && img.naturalWidth === 0) tryNext();
     });
 
-    /* 影片容錯與自動播放補強 */
+    /* 影片容錯與自動播放補強（重點：在設 src 前先把 muted/playsinline/autoplay 屬性設好） */
     function buildVideoCandidates(src){
       const ext = (src.match(/\.\w+$/) || [""])[0];
       const out = [src];
@@ -624,6 +627,16 @@
       return !!v.canPlayType && v.canPlayType(type).replace(/no/, '');
     }
     function tryPlayVideo(videoEl){
+      // 先把行動端需要的屬性都設好（在設 src 之前）
+      videoEl.muted = true;
+      videoEl.defaultMuted = true;
+      videoEl.playsInline = true;
+      videoEl.setAttribute('playsinline','');
+      videoEl.setAttribute('webkit-playsinline','');
+      videoEl.autoplay = true;
+      videoEl.setAttribute('autoplay','');
+      videoEl.preload = 'auto';
+
       const list = [];
       const data = videoEl.getAttribute('data-sources');
       if (data) { try { JSON.parse(data).forEach(s => list.push(s)); } catch {} }
@@ -643,10 +656,21 @@
         const src = uniq[idx++];
         videoEl.src = src;
         videoEl.load();
-        videoEl.play().catch(()=>{});
-        const timer = setTimeout(() => { if (videoEl.readyState < 2) tryNext(); }, 1500);
-        videoEl.addEventListener('loadeddata', () => clearTimeout(timer), { once:true });
-        videoEl.addEventListener('error', tryNext, { once:true });
+
+        // iOS 有時要等到能播放才成功
+        const onReady = () => { videoEl.play().catch(()=>{}); cleanup(); };
+        const onErr   = () => { cleanup(); tryNext(); };
+        const cleanup = () => {
+          videoEl.removeEventListener('loadeddata', onReady);
+          videoEl.removeEventListener('canplay', onReady);
+          videoEl.removeEventListener('error', onErr);
+        };
+        videoEl.addEventListener('loadeddata', onReady, { once:true });
+        videoEl.addEventListener('canplay', onReady, { once:true });
+        videoEl.addEventListener('error', onErr, { once:true });
+
+        // 超時就換下一個
+        setTimeout(() => { onErr(); }, 2500);
       }
       tryNext();
     }
@@ -655,13 +679,11 @@
     tryPlayVideo(bg);
     document.querySelectorAll('video.media').forEach(v => tryPlayVideo(v));
 
-    // 行動裝置：頁面回到前景 / 顯示時，再嘗試播放一次（更保險）
+    // 行動裝置：任何互動/回前景時都再嘗試播放（不要 only-once）
     const resumeAll = () => {
       [bg, ...document.querySelectorAll('video.media')].forEach(v => v && v.play && v.play().catch(()=>{}));
     };
-    window.addEventListener('touchstart', resumeAll, {passive:true, once:true});
-    window.addEventListener('click',      resumeAll, {passive:true, once:true});
-    ['visibilitychange','pageshow','focus'].forEach(ev => {
+    ['touchstart','pointerdown','click','visibilitychange','pageshow','focus'].forEach(ev=>{
       window.addEventListener(ev, resumeAll, {passive:true});
     });
 
@@ -678,8 +700,8 @@
       const again  = document.getElementById('again');
       if(!gift || !result || !again) return;
 
-      const GRAND = ["大獎 🎁"];
-      const SMALL = ["小獎 🎁"];
+      const GRAND = ["大獎 🎁 恭喜抽中！"];
+      const SMALL = ["小獎 🎁 也很讚！"];
       const pick = arr => arr[Math.floor(Math.random()*arr.length)];
 
       function heartSplash(){
@@ -698,7 +720,7 @@
       }
 
       function drawPrize(){
-        const big = Math.random() < 0.5;           // 中獎機率可自行調整
+        const big = Math.random() < 0.5;
         result.textContent = big ? pick(GRAND) : pick(SMALL);
         gift.classList.add('open');
         again.disabled = false;
