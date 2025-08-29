@@ -418,22 +418,7 @@
             </div>
           </article>
 
-          <!-- 9：影片 -->
-          <article class="slide">
-            <div class="page">
-              <div class="frame">
-                <div class="mat"><span class="tape"></span>
-                  <video class="media" autoplay muted playsinline webkit-playsinline controls preload="metadata"
-                         data-sources='["couple2_h264.mp4","couple2.webm"]'>
-                    <source src="couple2_h264.mp4" type="video/mp4">
-                    <source src="couple2.webm"     type="video/webm">
-                    您的瀏覽器不支援影片播放。
-                  </video>
-                </div>
-              </div>
-              <div class="text"><h3>寶寶耍可愛日常</h3></div>
-            </div>
-          </article>
+          
 
           <!-- 10～12：近期三張 -->
           <article class="slide">
@@ -682,8 +667,8 @@
       const again  = document.getElementById('again');
       if(!gift || !result || !again) return;
 
-      const GRAND = ["大獎 🎁 恭喜抽中！"];
-      const SMALL = ["小獎 🎁 也很讚！"];
+      const GRAND = ["大獎🎁 "];
+      const SMALL = ["小獎🎁 "];
       const pick  = arr => arr[Math.floor(Math.random()*arr.length)];
 
       function heartSplash(){
