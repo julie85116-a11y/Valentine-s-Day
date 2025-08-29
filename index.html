@@ -531,7 +531,7 @@
     const slides = Array.from(document.querySelectorAll('.slide'));
     let i = 0;
 
-    // 新增：暫停全部影片 & 播放目前頁的影片
+    // 暫停全部影片 & 播放目前頁的影片
     function pauseAllVideos(){
       document.querySelectorAll('video.media').forEach(v=>{
         try{ v.pause(); }catch(_){}
@@ -655,21 +655,69 @@
     tryPlayVideo(bg);
     document.querySelectorAll('video.media').forEach(v => tryPlayVideo(v));
 
-    // iOS/Android 第一次互動後再保險觸發播放
+    // 行動裝置：頁面回到前景 / 顯示時，再嘗試播放一次（更保險）
     const resumeAll = () => {
       [bg, ...document.querySelectorAll('video.media')].forEach(v => v && v.play && v.play().catch(()=>{}));
     };
     window.addEventListener('touchstart', resumeAll, {passive:true, once:true});
     window.addEventListener('click',      resumeAll, {passive:true, once:true});
+    ['visibilitychange','pageshow','focus'].forEach(ev => {
+      window.addEventListener(ev, resumeAll, {passive:true});
+    });
 
     // 首次載入時，如果第一張是影片就播放
     (function playFirstIfVideo(){
       const first = document.querySelector('.slide.active');
       if (first) playIfVideo(first);
     })();
+
+    /* ========= 抽獎（恢復點擊有反應） ========= */
+    (function setupLottery(){
+      const gift   = document.getElementById('gift');
+      const result = document.getElementById('result');
+      const again  = document.getElementById('again');
+      if(!gift || !result || !again) return;
+
+      const GRAND = ["大獎 🎁"];
+      const SMALL = ["小獎 🎁"];
+      const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+      function heartSplash(){
+        const rect = gift.getBoundingClientRect();
+        const cx = rect.width/2, cy = rect.height*0.35;
+        for(let i=0;i<12;i++){
+          const h = document.createElement('span');
+          h.className = 'heart-splash';
+          h.style.left = (cx + (Math.random()*120-60)) + 'px';
+          h.style.top  = (cy + (Math.random()*20-10)) + 'px';
+          h.style.opacity = 0.9;
+          h.style.animationDelay = (Math.random()*0.25) + 's';
+          gift.appendChild(h);
+          setTimeout(()=>h.remove(), 1300);
+        }
+      }
+
+      function drawPrize(){
+        const big = Math.random() < 0.5;           // 中獎機率可自行調整
+        result.textContent = big ? pick(GRAND) : pick(SMALL);
+        gift.classList.add('open');
+        again.disabled = false;
+        heartSplash();
+      }
+
+      gift.addEventListener('click', () => {
+        if (!gift.classList.contains('open')) drawPrize();
+      });
+      again.addEventListener('click', () => {
+        gift.classList.remove('open');
+        result.textContent = '準備好了嗎？點禮物盒抽獎！';
+        again.disabled = true;
+      });
+    })();
   </script>
 </body>
 </html>
+
 
 
 
