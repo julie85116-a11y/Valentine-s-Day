@@ -302,11 +302,13 @@
 </head>
 <body class="use-hand">
 
-  <!-- 背景影片（root 路徑；優先 mp4，再 webm） -->
+  <!-- 背景影片（加入雙副檔名與正常檔名兩種） -->
   <video class="bg-video" autoplay muted playsinline webkit-playsinline poster="IMG_3454.JPG"
-         data-sources='["couple_h264.mp4","couple.webm"]'>
-    <source src="couple_h264.mp4" type="video/mp4">
-    <source src="couple.webm" type="video/webm">
+         data-sources='["couple_h264.mp4.mp4","couple.webm.webm","couple_h264.mp4","couple.webm"]'>
+    <source src="couple_h264.mp4.mp4" type="video/mp4">
+    <source src="couple.webm.webm"     type="video/webm">
+    <source src="couple_h264.mp4"      type="video/mp4">
+    <source src="couple.webm"          type="video/webm">
     您的瀏覽器不支援影片播放。
   </video>
   <div class="bg-overlay" aria-hidden="true"></div>
@@ -529,7 +531,7 @@
     const slides = Array.from(document.querySelectorAll('.slide'));
     let i = 0;
 
-    // 新增：暫停全部影片 & 播放目前頁的影片（確保自動播放）
+    // 新增：暫停全部影片 & 播放目前頁的影片
     function pauseAllVideos(){
       document.querySelectorAll('video.media').forEach(v=>{
         try{ v.pause(); }catch(_){}
@@ -543,7 +545,6 @@
       v.setAttribute('playsinline','');
       v.setAttribute('webkit-playsinline','');
       v.autoplay = true;
-      // 直接嘗試播放
       v.play().catch(()=>{});
     }
 
@@ -551,7 +552,6 @@
       slides[i].classList.remove('active');
       i = (n + slides.length) % slides.length;
       slides[i].classList.add('active');
-      // 切換時控制影片
       pauseAllVideos();
       playIfVideo(slides[i]);
     }
@@ -609,7 +609,7 @@
       if (img.complete && img.naturalWidth === 0) tryNext();
     });
 
-    /* 影片容錯：依序嘗試來源、大小寫/編碼變體；補自動播放 */
+    /* 影片容錯與自動播放補強 */
     function buildVideoCandidates(src){
       const ext = (src.match(/\.\w+$/) || [""])[0];
       const out = [src];
@@ -655,15 +655,18 @@
     tryPlayVideo(bg);
     document.querySelectorAll('video.media').forEach(v => tryPlayVideo(v));
 
-    // iOS/Android 需要第一次互動後再保險觸發一次播放
+    // iOS/Android 第一次互動後再保險觸發播放
     const resumeAll = () => {
       [bg, ...document.querySelectorAll('video.media')].forEach(v => v && v.play && v.play().catch(()=>{}));
     };
     window.addEventListener('touchstart', resumeAll, {passive:true, once:true});
-    window.addEventListener('click', resumeAll, {passive:true, once:true});
+    window.addEventListener('click',      resumeAll, {passive:true, once:true});
 
     // 首次載入時，如果第一張是影片就播放
-    playIfVideo(slides[0]);
+    (function playFirstIfVideo(){
+      const first = document.querySelector('.slide.active');
+      if (first) playIfVideo(first);
+    })();
   </script>
 </body>
 </html>
