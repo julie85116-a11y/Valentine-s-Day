@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>七夕情人節｜麻糬寶寶我愛你</title>
 
+  <!-- 字體連線優化 -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
   <style>
-    /* 只載入 Ma Shan Zheng 的單一字重（400），避免混字重/混字型 */
+    /* 單一字體／單一字重，避免混用造成粗細不一 */
     @font-face{
       font-family: "HandUnified";
       font-style: normal;
       font-weight: 400;
-      font-display: block; /* 字體未載入前先不顯示，避免 FOUT 造成粗細不一 */
+      font-display: swap; /* 先以系統字體顯示，再換成本字體，避免整頁空白 */
       src: url("https://fonts.gstatic.com/s/mashanzheng/v16/NaPecZTIAOhVxoMyOr9n_E7fdMPmBA.woff2") format("woff2");
       unicode-range: U+0-7F, U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE6F, U+FF00-FFEF;
     }
@@ -43,7 +47,7 @@
     *{ box-sizing:border-box }
     html,body{ height:100% }
 
-    /* ===== 把全站字體「鎖死」成單一款，固定 400，停用所有合成與連字 ===== */
+    /* 全站鎖定單一手寫字體與字重，關閉合成、連字與字距微調 */
     .use-hand,
     html, body, .title, .msg, .text, .cap, .arrow, .paper, .album, .slides, .lottery {
       font-family: var(--hand), "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji" !important;
@@ -58,13 +62,10 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
-      paint-order: stroke fill;         /* 避免旋轉後筆畫變粗 */
+      paint-order: stroke fill;
       letter-spacing: var(--track);
       line-height: var(--lh);
     }
-
-    /* 字體未 ready 前先隱藏，避免先以系統字體繪製造成不一致 */
-    html:not(.hand-ready) body{ visibility:hidden }
 
     body{
       margin:0; color:#2b2b2b; overflow-x:hidden;
@@ -285,7 +286,7 @@
     }
     .btn:active{ transform:translateY(1px) }
 
-    /* hearts confetti for lottery */
+    /* 心心煙火 */
     .heart-splash{
       position:absolute; pointer-events:none; width:18px; height:18px;
       background:var(--env-heart); transform:rotate(45deg); border-radius:4px;
@@ -305,7 +306,7 @@
 <body class="use-hand">
 
   <!-- 背景影片 -->
-  <video class="bg-video" autoplay muted loop playsinline poster="照片/IMG_3454.JPG">
+  <video class="bg-video" autoplay muted loop playsinline poster="照片/IMG_3454.JPG" preload="none">
     <source src="照片/couple.webm" type="video/webm">
     <source src="照片/couple_h264.mp4" type="video/mp4">
     您的瀏覽器不支援影片播放。
@@ -355,56 +356,56 @@
         <div class="slides" id="slides">
           <article class="slide active">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第一張.JPG" alt="曖昧時期手手"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第一張.JPG" alt="曖昧時期手手"></div></div>
               <div class="text"><h3>曖昧的時候都會給我看手手</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第二張.jpg" alt="一起追太陽看日出"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第二張.jpg" alt="一起追太陽看日出"></div></div>
               <div class="text"><h3>一起追太陽看日出（好浪漫</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第三張.JPG" alt="拍拍貼機"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第三張.JPG" alt="拍拍貼機"></div></div>
               <div class="text"><h3>一起拍拍貼機</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第四張.jpg" alt="520 玫瑰花"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第四張.jpg" alt="520 玫瑰花"></div></div>
               <div class="text"><h3>520 有人送了一束玫瑰花（有儀式感、浪漫的男人</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第五張.jpg" alt="日常逛 IKEA"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第五張.jpg" alt="日常逛 IKEA"></div></div>
               <div class="text"><h3>日常約會 逛 IKEA｜甜蜜單純的生活</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第六張.JPG" alt="台南遊 偷拍寶寶"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第六張.JPG" alt="台南遊 偷拍寶寶"></div></div>
               <div class="text"><h3>台南遊｜偷拍寶寶</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第七張.jpg" alt="可可愛愛的床照"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第七張.jpg" alt="可可愛愛的床照"></div></div>
               <div class="text"><h3>可可愛愛的床照</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第八張.JPG" alt="到哪都要逛枕頭"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第八張.JPG" alt="到哪都要逛枕頭"></div></div>
               <div class="text"><h3>到哪都要逛枕頭的寶寶</h3></div>
             </div>
           </article>
@@ -412,7 +413,7 @@
           <article class="slide">
             <div class="page">
               <div class="frame"><div class="mat"><span class="tape"></span>
-                <video class="media" autoplay muted loop playsinline controls>
+                <video class="media" autoplay muted loop playsinline controls preload="none">
                   <source src="照片/couple2.webm" type="video/webm">
                   <source src="照片/couple2_h264.mp4" type="video/mp4">
                   您的瀏覽器不支援影片播放。
@@ -424,35 +425,35 @@
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/IMG_3412.JPG" alt="近期：女友視角"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/IMG_3412.JPG" alt="近期：女友視角"></div></div>
               <div class="text"><h3>近期照片：女友視角</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/IMG_3419.JPG" alt="近期：男友視角"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/IMG_3419.JPG" alt="近期：男友視角"></div></div>
               <div class="text"><h3>近期照片：男友視角</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/IMG_3454.JPG" alt="又是不錯看的合照"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/IMG_3454.JPG" alt="又是不錯看的合照"></div></div>
               <div class="text"><h3>又是不錯看的一張對鏡拍</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第九張-JPG.jpg" alt="七夕玫瑰"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第九張-JPG.jpg" alt="七夕玫瑰"></div></div>
               <div class="text"><h3>七夕寶寶提前準備的玫瑰花啊啊啊</h3></div>
             </div>
           </article>
 
           <article class="slide">
             <div class="page">
-              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" src="照片/第十張.jpg" alt="巧克力"></div></div>
+              <div class="frame"><div class="mat"><span class="tape"></span><img class="media" loading="lazy" src="照片/第十張.jpg" alt="巧克力"></div></div>
               <div class="text"><h3>還有一盒巧克力 ❤️</h3></div>
             </div>
           </article>
@@ -486,9 +487,6 @@
   </main>
 
   <script>
-    /* 確認字型載入完成後再顯示（避免粗細不一） */
-    document.fonts.ready.then(() => document.documentElement.classList.add('hand-ready'));
-
     // 花瓣數量：桌機多、手機少
     const isMobile = matchMedia('(max-width: 760px)').matches;
     const sak = isMobile ? 22 : 46;
@@ -533,10 +531,11 @@
     area.addEventListener('touchmove',  e => dx = e.touches[0].clientX - sx, {passive:true});
     area.addEventListener('touchend',   () => { if(Math.abs(dx)>40){ dx>0?go(i-1):go(i+1) } dx=0; }, {passive:true});
 
-    /* --- 強化圖片載入容錯：大小寫、編碼、常見副檔名互換，最後給破圖提示 --- */
+    /* --- 強化圖片載入容錯：大小寫、編碼、常見副檔名互換，且即刻檢查是否已失敗 --- */
     document.querySelectorAll('img.media').forEach(img => {
       const orig = img.getAttribute('src') || "";
       const ext = (orig.match(/\.\w+$/) || [""])[0];
+
       const candidates = [];
       candidates.push(orig);
       if (ext) {
@@ -550,9 +549,11 @@
       candidates.push(encodeURI(orig));
       if (ext) candidates.push(encodeURI(orig.replace(/\.\w+$/, "")) + ext);
       candidates.push(orig.replace(/\s/g, "%20"));
+
       const tried = new Set();
       const unique = candidates.filter(u => u && !tried.has(u) && (tried.add(u), true));
       let idx = 0;
+
       function tryNext(){
         if (idx >= unique.length) {
           img.classList.add('broken');
@@ -565,7 +566,10 @@
         probe.onerror = tryNext;
         probe.src = url;
       }
+
+      // 1) 先掛 error；2) 若載入已失敗則立即嘗試替代
       img.addEventListener('error', tryNext, { once:true });
+      if (img.complete && img.naturalWidth === 0) tryNext();
     });
 
     /* ========= 抽獎邏輯 ========= */
@@ -573,17 +577,13 @@
     const result = document.getElementById('result');
     const again  = document.getElementById('again');
 
-    // 自訂大獎 / 小獎清單
-    const GRAND = [
-      "大獎 🎁",
-    ];
-    const SMALL = [
-      "小獎 🎁",
-    ];
+    // 大獎 / 小獎（可自行改字）
+    const GRAND = ["大獎 🎁 恭喜抽中！"];
+    const SMALL = ["小獎 🎁 也很讚！"];
 
     function randPick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
 
-    function heartSplash(where){
+    function heartSplash(){
       const host = gift;
       const rect = host.getBoundingClientRect();
       const cx = rect.width/2, cy = rect.height*0.35;
@@ -601,8 +601,8 @@
     }
 
     function drawPrize(){
-      // 50% 機率大獎，50% 小獎
-      const big = Math.random() < 0.25;
+      // 50% 機率大獎 / 50% 小獎
+      const big = Math.random() < 0.5;
       const text = big ? randPick(GRAND) : randPick(SMALL);
       result.textContent = text;
       gift.classList.add('open');
@@ -615,7 +615,6 @@
     });
 
     again.addEventListener('click', () => {
-      // 重置
       gift.classList.remove('open');
       result.textContent = "準備好了嗎？點禮物盒再抽一次！";
       again.disabled = true;
@@ -623,6 +622,7 @@
   </script>
 </body>
 </html>
+
 
 
 
