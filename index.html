@@ -416,22 +416,22 @@
             </div>
           </article>
 
-          <!-- 9：影片（這裡加上 autoplay） -->
           <article class="slide">
-            <div class="page">
-              <div class="frame">
-                <div class="mat"><span class="tape"></span>
-                  <video class="media" autoplay muted playsinline webkit-playsinline controls preload="metadata"
-                         data-sources='["couple2_h264.mp4","couple2.webm"]'>
-                    <source src="couple2_h264.mp4" type="video/mp4">
-                    <source src="couple2.webm" type="video/webm">
-                    您的瀏覽器不支援影片播放。
-                  </video>
-                </div>
-              </div>
-              <div class="text"><h3>寶寶耍可愛日常</h3></div>
-            </div>
-          </article>
+   <div class="page">
+    <div class="frame">
+      <div class="mat"><span class="tape"></span>
+        <video class="media" autoplay muted playsinline webkit-playsinline controls preload="metadata"
+               data-sources='["couple2_h264.mp4","couple2.webm"]'>
+          <source src="couple2_h264.mp4" type="video/mp4">
+          <source src="couple2.webm"     type="video/webm">
+          您的瀏覽器不支援影片播放。
+        </video>
+      </div>
+    </div>
+    <div class="text"><h3>寶寶耍可愛日常</h3></div>
+  </div>
+</article>
+
 
           <!-- 10～12：近期三張 -->
           <article class="slide">
@@ -515,7 +515,7 @@
         const size = 12 + Math.random()*22;
         el.style.width = size+'px'; el.style.height = size*1.2+'px';
         el.style.left = (Math.random()*100)+'vw';
-        el.style.opacity = 0.75 + Math.random()*0.25;
+        el.style.opacity = 0.5 + Math.random()*0.5;
         const fall = 10 + Math.random()*12, sway = 2.5 + Math.random()*4.5;
         el.style.setProperty('--fall', fall+'s'); el.style.setProperty('--sway', sway+'s');
         el.style.animationDelay = (-Math.random()*fall)+'s, '+(-Math.random()*sway)+'s';
